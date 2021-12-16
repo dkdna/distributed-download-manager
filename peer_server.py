@@ -153,13 +153,13 @@ if __name__ == "__main__":
         logging.error("Invalid config file!")
         exit(1)
 
-    # try:
-    s = Server(
-        tracker_ip = configuration['tracker_ip'], tracker_port = configuration['tracker_port'],
-        client_port = configuration['client_port'], server_client_port = configuration['server_client_port'],
-        server_tracker_port = configuration['server_tracker_port']
-    )
-    s.run()
+    try:
+        s = Server(
+            tracker_ip = configuration['tracker_ip'], tracker_port = configuration['tracker_port'],
+            client_port = configuration['client_port'], server_client_port = configuration['server_client_port'],
+            server_tracker_port = configuration['server_tracker_port']
+        )
+        s.run()
 
-    # except Exception as e:
-        # logging.error(e)
+    except Exception as e:
+        logging.error(e)
