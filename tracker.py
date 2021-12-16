@@ -23,6 +23,7 @@ class Tracker:
             io, addr = sock.accept()
             logging.info(f"Received connection from {addr}")
 
+            # Validate handshake
             data = io.recv(1024)
             out = self.tracker_proto.validate_handshake(data)
 
@@ -61,6 +62,7 @@ class Tracker:
         handshake = self.tracker_proto.gen_handshake()
         sock.send(handshake.encode())
 
+        # Handle server request (add/remove)
         data = sock.recv(1024)
         out = self.tracker_proto.handle_server_req(data)
 

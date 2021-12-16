@@ -44,6 +44,7 @@ class Client:
         handshake = client_proto.gen_handshake()
         sock.send(handshake.encode())
 
+        # Validate received handshake
         data = sock.recv(1024)
         if not client_proto.validate_handshake(data):
             logging.error("Invalid handshake! Exiting!")
@@ -65,7 +66,9 @@ class Client:
         sock.shutdown(socket.SHUT_RDWR)
         sock.close()
 
-    def get_download_info(self):    
+    def get_download_info(self):
+
+        # Find file size & partial download support  
         r = requests.head(self.url)
         headers = r.headers
         self.file_size = int(headers['Content-Length'])
@@ -77,6 +80,8 @@ class Client:
         logging.info(f"File size -> {self.file_size} bytes")
     
     def split_download(self):
+
+        # Calculate download ranges
         logging.info(f"Downloading with peer servers {self.peer_servers}")
         server_count = len(self.peer_servers) + 1
 
@@ -95,12 +100,15 @@ class Client:
 
         threads = []
         results = [None] * len(self.download_ranges)
+
         # Multithreaded downloader
         for i in range(len(self.download_ranges) - 1):
+            # Peer server downloads
             thread = threading.Thread(target = self.server_downloader, args=(self.download_ranges[i], results, i))
             threads.append(thread)
             thread.start()
 
+        # Peer client download
         thread = threading.Thread(target = self.client_downloader, args=(self.download_ranges[-1], results, len(self.download_ranges) - 1))
         threads.append(thread)
         thread.start()
@@ -113,6 +121,7 @@ class Client:
     def client_downloader(self, range, results, i):
         logging.info(f"Downloading locally for range {range}")
 
+        # Download locally
         r = requests.get(self.url, headers = {"Range" : f"bytes={range[0]}-{range[1]}"})
         results[i] = r.content
 
@@ -122,21 +131,20 @@ class Client:
         logging.info(f"Downloading for range {range}")
 
         client_proto = ClientProtocol()
+        # Generate packet for range download
         range_sender = client_proto.gen_download_range(self.url, range)
 
         # Connect to peer server
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind(('', self.client_server_port))
-
         sock.settimeout(10000000)
-
         sock.connect((self.peer_servers[i], self.server_port))
 
         # Send download range
         sock.send(range_sender.encode())
 
+        # Receive data from peer server
         data = b""
-
         while len(data) < (range[1] - range[0] + 2):
             data += sock.recv(1024)
         
@@ -152,6 +160,7 @@ class Client:
     
     def merge_and_save(self, results):
 
+        # Merge received data
         logging.info(f"Received all data, merging!")
         with open(str(self.path), "wb") as f:
             for part in results:
@@ -172,6 +181,7 @@ if __name__ == "__main__":
     configuration = dict()
 
     try:
+        # Parsing config file
         with open(args.config, "r") as f:
             for line in f.readlines():
 

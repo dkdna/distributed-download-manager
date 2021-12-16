@@ -31,7 +31,7 @@ class Server:
         handshake = self.server_proto.gen_handshake()
         sock.send(handshake.encode())
 
-        # Validate handshake
+        # Validate received handshake
         data = sock.recv(1024)
         if not self.server_proto.validate_handshake(data):
             logging.error("Invalid handshake! Exiting!")
@@ -87,9 +87,11 @@ class Server:
             io.close()
 
     
-    def download(self, url, range):
+    def download(self, url, ranges):
+
+        # Download with given range
         logging.info("Downloading!")
-        r = requests.get(url, headers = {"Range" : f"bytes={range[0]}-{range[1]}"})
+        r = requests.get(url, headers = {"Range" : f"bytes={ranges[0]}-{ranges[1]}"})
 
         logging.info("Download complete!")
         return r.content
@@ -103,6 +105,7 @@ class Server:
         handshake = self.server_proto.gen_handshake()
         sock.send(handshake.encode())
 
+        # Validate received handshake
         data = sock.recv(1024)
         if not self.server_proto.validate(data):
             logging.error("Something went wrong!")
