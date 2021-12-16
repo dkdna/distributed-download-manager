@@ -1,4 +1,4 @@
-from utils import *
+from utils.byte_utils import *
 
 class ClientProtocol:
     def gen_handshake(self):

@@ -2,8 +2,8 @@ import socket
 import argparse
 import logging
 import requests
-from packets import ServerProtocol
-from utils import *
+from utils.packet_utils import ServerProtocol
+from utils.byte_utils import *
 
 class Server:
     def __init__(self, tracker_ip, tracker_port, client_port, server_client_port, server_tracker_port):

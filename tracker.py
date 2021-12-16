@@ -1,8 +1,8 @@
 import socket
 import argparse
 import logging
-from packets import TrackerProtocol
-from utils import *
+from utils.packet_utils import TrackerProtocol
+from utils.byte_utils import *
 
 class Tracker:
     def __init__(self, tracker_port):

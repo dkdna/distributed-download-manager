@@ -3,8 +3,8 @@ import argparse
 import logging
 from pathlib import Path
 import requests
-from packets import ClientProtocol
-from utils import *
+from utils.packet_utils import ClientProtocol
+from utils.byte_utils import *
 import threading
 
 class Client:
