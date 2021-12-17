@@ -13,7 +13,6 @@ The download manager consists of 3 parts:
 ## Usage
 
 + Setup a config file ([Sample config](.config)). The config should contain:
-    + `URL <url>` -> URL to download
     + `TRACKER_IP <ip>` -> IP address of the tracker (Should always be running)
     + `TRACKER_PORT <port>` -> Port of the tracker
     + `URL <url>` -> URL of file to be downloaded
